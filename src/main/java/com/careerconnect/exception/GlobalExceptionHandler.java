@@ -71,6 +71,13 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", errors, request);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex,
+                                                                      HttpServletRequest request) {
+        logger.warn("Invalid argument: {}", ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex, HttpServletRequest request) {
         logger.error("Unexpected error", ex);

@@ -1,0 +1,191 @@
+{
+  "info": {
+    "name": "CareerConnect AI Capstone Test Suite (T-01 to T-17)",
+    "description": "Complete test suite covering student CRUD, company management, placement drives, eligibility evaluation, application lifecycle transitions, negative cases, and Ollama chatbot endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "T-01 Create Valid Student (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Rahul Verma\",\n  \"email\": \"rahul@example.com\",\n  \"programme\": \"B.Tech CS\",\n  \"graduationYear\": 2026,\n  \"cgpa\": 8.5,\n  \"activeBacklogs\": 0,\n  \"skills\": [\"Java\", \"Spring Boot\", \"SQL\"]\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/students", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "students"] }
+      }
+    },
+    {
+      "name": "T-02 Create Duplicate Student Email (409 Conflict)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Another Student\",\n  \"email\": \"rahul@example.com\",\n  \"programme\": \"B.Tech IT\",\n  \"graduationYear\": 2026,\n  \"cgpa\": 7.5,\n  \"activeBacklogs\": 0,\n  \"skills\": [\"Python\"]\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/students", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "students"] }
+      }
+    },
+    {
+      "name": "Create Company (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"TechCorp\",\n  \"sector\": \"IT\",\n  \"description\": \"Cloud Software solutions\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/companies", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "companies"] }
+      }
+    },
+    {
+      "name": "T-03 Create Drive for Unknown Company (404 Not Found)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyId\": \"CMP-999\",\n  \"role\": \"Backend Dev\",\n  \"location\": \"Bengaluru\",\n  \"packageLpa\": 12.0,\n  \"deadline\": \"2026-12-31\",\n  \"requiredSkills\": [\"Java\"],\n  \"minCgpa\": 7.0,\n  \"maxBacklogs\": 0,\n  \"allowedProgrammes\": [\"B.Tech CS\"],\n  \"graduationYear\": 2026\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/drives", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "drives"] }
+      }
+    },
+    {
+      "name": "Create Valid Placement Drive (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyId\": \"CMP-001\",\n  \"role\": \"Software Engineer\",\n  \"location\": \"Bengaluru\",\n  \"packageLpa\": 14.0,\n  \"deadline\": \"2026-12-31\",\n  \"requiredSkills\": [\"Java\", \"Spring Boot\"],\n  \"minCgpa\": 8.0,\n  \"maxBacklogs\": 0,\n  \"allowedProgrammes\": [\"B.Tech CS\"],\n  \"graduationYear\": 2026\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/drives", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "drives"] }
+      }
+    },
+    {
+      "name": "T-04 Evaluate Eligible Student (200 OK)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:8080/api/drives/DRV-100/eligibility/STU-001", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "drives", "DRV-100", "eligibility", "STU-001"] }
+      }
+    },
+    {
+      "name": "T-06 Submit Eligible Application (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": \"STU-001\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/drives/DRV-100/applications", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "drives", "DRV-100", "applications"] }
+      }
+    },
+    {
+      "name": "T-07 Submit Duplicate Application (409 Conflict)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": \"STU-001\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/drives/DRV-100/applications", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "drives", "DRV-100", "applications"] }
+      }
+    },
+    {
+      "name": "T-10 Valid Status Transition SUBMITTED -> UNDER_REVIEW (200 OK)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"UNDER_REVIEW\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/applications/APP-500/status", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "applications", "APP-500", "status"] }
+      }
+    },
+    {
+      "name": "T-11 Invalid Status Transition UNDER_REVIEW -> SUBMITTED (409 Conflict)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"SUBMITTED\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/applications/APP-500/status", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "applications", "APP-500", "status"] }
+      }
+    },
+    {
+      "name": "T-12 Retrieve Unknown Resource (404 Not Found)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:8080/api/students/STU-999", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "students", "STU-999"] }
+      }
+    },
+    {
+      "name": "T-13 Blank/Invalid Request Field (400 Bad Request)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"invalid-email\",\n  \"programme\": \"\",\n  \"graduationYear\": 2015,\n  \"cgpa\": -2.0\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/students", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "students"] }
+      }
+    },
+    {
+      "name": "T-14 Chatbot General FAQ (200 OK)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What basic documents should I prepare for campus interviews?\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/chat", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "chat"] }
+      }
+    },
+    {
+      "name": "T-15 & T-16 Chatbot Context-Aware Guidance (200 OK)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": \"STU-001\",\n  \"driveId\": \"DRV-100\",\n  \"message\": \"Check my eligibility and give me preparation tips for this role.\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/chat", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "chat"] }
+      }
+    }
+  ]
+}
